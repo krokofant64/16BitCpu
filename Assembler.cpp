@@ -97,6 +97,7 @@ Assembler::parseAddress(
    bool offsetPresent = true;
    if (currentChar() != '[')
    {
+      // Parse label
       std::string identifier;
       if (parseIdentifier(identifier) == true)
       {
@@ -106,10 +107,12 @@ Assembler::parseAddress(
             return true;
          }
       }
-      errorMessageM = "Address ('[' .. ']' or label expected";
+      errorMessageM = "Address ('[' R_base(opt) +-offset(opt) ']' or Label) expected.";
       return false;
    }
-   nextChar();
+
+   // Parse '[' R_base(opt) Offset(opt) ']'
+   nextChar(); // Eat '['
    skipSpaces();
 
    if (parseRegister(theRegister) == false)
@@ -126,15 +129,17 @@ Assembler::parseAddress(
    skipSpaces();
    if (currentChar() != ']')
    {
+      errorMessageM = "']' expected.";
       return false;
    }
-   nextChar();
+   nextChar(); // Eat ']'
    if (registerPresent || offsetPresent)
    {
       return true;
    }
    else
    {
+      errorMessageM = "Address ('[' R_base(opt) +-offset(opt) ']' or Label) expected.";
       return false;
    }
 }
@@ -291,6 +296,42 @@ Assembler::parseDecimalNumber(
 // ----------------------------------------------------------------------------
 
 bool
+Assembler::parseDirective()
+{
+   std::string directive;
+   if (parseIdentifier(directive) == false)
+   {
+      return false;
+   }
+   skipSpaces();
+   if (directive == "data")
+   {
+      do
+      {
+         uint32_t number;
+         if (parseExpression(number) == false)
+         {
+            return "Data, comment, or end - of - line expected.";
+         }
+         if (number > 0xFFFF)
+         {
+            errorMessageM = "Number is larger than machineword.";
+            return false;
+         }
+         skipSpaces();
+         codeM[currentAddressM++] = number & 0xFFFF;
+      } while (currentChar() == ',');
+      if (isEndOfLine() == false)
+      {
+         errorMessageM = "Data, comment, or end-of-line expected.";
+      }
+   }
+   return true;
+}
+
+// ----------------------------------------------------------------------------
+
+bool
 Assembler::parseExpression(
    uint32_t& theNumber)
 {
@@ -356,6 +397,14 @@ Assembler::parseLine()
       // Comment or empty line
       return true;
    }
+
+   if (currentChar() == '.')
+   {
+      nextChar(); // Eat '.'
+      return parseDirective();
+   }
+
+   // Parse label or opcode
    std::string identifier;
    if (parseIdentifier(identifier) == false)
    {
@@ -382,7 +431,7 @@ Assembler::parseLine()
          return false;
       }
 
-      nextChar();
+      nextChar(); // Eat ':'
       skipSpaces();
 
       if (isEndOfLine())
@@ -390,6 +439,14 @@ Assembler::parseLine()
          // Comment or empty line
          return true;
       }
+
+      if (currentChar() == '.')
+      {
+         nextChar(); // Eat '.'
+         return parseDirective();
+      }
+
+      // Parse opcode
       if (parseIdentifier(identifier) == false)
       {
          errorMessageM = "Opcode, comment or empty line expected.";
@@ -497,11 +554,20 @@ Assembler::parseOffset(
    }
    if (isNegative)
    {
+      // negative offset
       number = (~number + 1); // two's complement
+      if ((number & ~theOffsetMask) != ~theOffsetMask)
+      {
+         return false;
+      }
    }
-   if ((number & (~theOffsetMask)) != 0)
+   else
    {
-      return false;
+      // positve offset
+      if ((number & (~theOffsetMask)) != 0)
+      {
+         return false;
+      }
    }
    theOffset = number & theOffsetMask;
    return true;
@@ -706,11 +772,10 @@ Assembler::parseReg3Offs10(
       if (isEndOfLine() == true)
       {
          theCode = encodeRegister3(theCode, r3);
-         theCode = encodeOffs7(theCode, offset);
+         theCode = encodeOffs10(theCode, offset);
          return true;
       }
    }
-   errorMessageM = "Arguments R_base +-offset expected.";
    return false;
 }
 
@@ -723,34 +788,33 @@ Assembler::parseRegister(
    const char* parsePointer = getParsePointer();
    if (currentChar() == 'R')
    {
-      nextChar();
+      nextChar(); // Eat 'R'
       if (currentChar() >= '0' && currentChar() <= '7')
       {
          theRegister = currentChar() - '0';
-         nextChar();
+         nextChar(); // Eat digit
          return true;
       }
    }
    else
    if (currentChar() == 'S')
    {
-      nextChar();
+      nextChar(); // Eat 'S'
       if (currentChar() == 'P')
       {
          theRegister = 6;
-         nextChar();
+         nextChar(); // Eat 'P'
          return true;
       }
-
    }
    else
    if (currentChar() == 'P')
    {
-      nextChar();
+      nextChar(); // Eat 'P'
       if (currentChar() == 'C')
       {
          theRegister = 7;
-         nextChar();
+         nextChar(); // Eat 'C'
          return true;
       }
    }
@@ -769,6 +833,7 @@ Assembler::findLabel(
    LabelMap::iterator iter = labelMapM.find(theLabel);
    if (iter == labelMapM.end())
    {
+      // Label not found - new entry
       Label label;
       label.name = theLabel;
       label.isDefined = false;
@@ -783,9 +848,11 @@ Assembler::findLabel(
    }
    else
    {
+      // Label found
       Label& label = (*iter).second;
       if (label.isDefined == false)
       {
+         // Label found, but not yet defined - add entry to fixup table
          FixupPos fixupPos;
          fixupPos.mask = theMask;
          fixupPos.address = currentAddressM;
@@ -794,13 +861,11 @@ Assembler::findLabel(
       }
       else
       {
-         int16_t offset = (int16_t)currentAddressM - (label.address + 1);
-         if ((offset & (~theMask)) != 0)
+         // Label found and defined
+         if (offsetFromLabel(label, currentAddressM, theMask, theOffset) == false)
          {
-            errorMessageM = "Label \"" + theLabel + "\" is to far from caller at address " + std::to_string(label.address) + ".";
             return false;
          }
-         theOffset =  (offset & theMask);
       }
    }
    return true;
@@ -815,6 +880,7 @@ Assembler::storeLabel(
    LabelMap::iterator iter = labelMapM.find(theLabel);
    if (iter == labelMapM.end())
    {
+      // New label
       Label label;
       label.name = theLabel;
       label.isDefined = true;
@@ -823,28 +889,71 @@ Assembler::storeLabel(
    }
    else
    {
+      // Existing, but not yet defined label
       Label& label = (*iter).second;
       if (label.isDefined == true)
       {
+         // Duplicat label
          errorMessageM = "Label \"" + theLabel + "\" is already defined.";
          return false;
       }
+
+      // Define the label
       label.isDefined = true;
       label.address = currentAddressM;
+
+      // 
       for (size_t i = 0; i < label.fixupPos.size(); i++)
       {
          uint16_t address = label.fixupPos[i].address;
          uint16_t mask = label.fixupPos[i].mask;
-         int16_t offset = (int16_t)currentAddressM - (address + 1);
-         if ((offset & (~mask)) != 0)
+         uint16_t offset;
+         if (offsetFromLabel(label, address, mask, offset) == false)
          {
-            errorMessageM = "Label \"" + theLabel + "\" is to far from caller at address " + std::to_string(address) + ".";
             return false;
          }
          codeM[address] = (codeM[address] & ~mask) | (offset & mask);
       }
       label.fixupPos.clear();
    }
+   return true;
+}
+
+// ----------------------------------------------------------------------------
+
+bool
+Assembler::offsetFromLabel(
+   const Label& theLabel,
+   uint16_t     theAddress,
+   uint16_t     theMask,
+   uint16_t&    theOffset)
+{
+   uint16_t offset = theLabel.address - (theAddress + 1);
+   uint16_t notMask = ~theMask;
+   uint16_t extra = offset & notMask;
+   if (offset & 0x8000)
+   {
+      // Negative offset
+      if (extra != notMask)
+      {
+         errorMessageM = "Label \"" + theLabel.name + 
+                         "\" is too far from caller at address " + 
+                         std::to_string(theLabel.address) + ".";
+         return false;
+      }
+   }
+   else
+   {
+      // Positive offset
+      if (extra != 0)
+      {
+         errorMessageM = "Label \"" + theLabel.name + 
+                         "\" is too far from caller at address " + 
+                         std::to_string(theLabel.address) + ".";
+         return false;
+      }
+   }
+   theOffset = offset & theMask;
    return true;
 }
 

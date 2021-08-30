@@ -88,6 +88,9 @@ private:
       uint32_t& theNumber);
 
    bool
+   parseDirective();
+      
+   bool
    parseExpression(
       uint32_t& theNumber);
 
@@ -160,6 +163,13 @@ private:
    bool
    storeLabel(
       const std::string& theLabel);
+
+   bool
+   offsetFromLabel(
+      const Label& theLabel,
+      uint16_t     theAddress,
+      uint16_t     theMask,
+      uint16_t&    theOffset);
 
    uint16_t
    encodeImm8(
