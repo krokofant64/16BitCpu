@@ -1,6 +1,7 @@
 #ifndef CPUCONTROLPANEL_H
 #define CPUCONTROLPANEL_H
 
+#include "Assembler.h"
 #include "Cpu.h"
 #include "Memory.h"
 
@@ -9,8 +10,9 @@ class CpuControlPanel
 public:
 
    CpuControlPanel(
-      const Cpu&    theCpu,
-      const Memory& theMemory);
+      const Cpu&       theCpu,
+      const Memory&    theMemory,
+      const Assembler& theAssembler);
 
    ~CpuControlPanel();
 
@@ -26,9 +28,10 @@ private:
       const char* theFormat, 
       ...) const;
 
-   const Cpu&    cpuM;
-   const Memory& memoryM;
-   char*         screenMd;
+   const Assembler& assemblerM;
+   const Cpu&       cpuM;
+   const Memory&    memoryM;
+   char*            screenMd;
 };
 
 #endif

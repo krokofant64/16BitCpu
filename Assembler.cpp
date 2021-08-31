@@ -273,7 +273,7 @@ Assembler::parseBinNumber(
             {
                return true;
             }
-            nextChar();
+            nextChar(); // Eat digit
          }
       }
    }
@@ -289,6 +289,7 @@ Assembler::parseDecimalNumber(
    while (isdigit(currentChar()))
    {
       theNumber = theNumber * 10 + currentChar() - '0';
+      nextChar(); // Eat digit
    }
    return true;
 }
@@ -361,7 +362,7 @@ Assembler::parseHexNumber(
       {
          theNumber += 10 + currentChar() - 'A';
       }
-      nextChar();
+      nextChar(); // Eat hex digit
    }
    return true;
 }
@@ -375,11 +376,11 @@ Assembler::parseIdentifier(
    if (isalpha(currentChar()))
    {
       theIdentifier = currentChar();
-      nextChar();      
+      nextChar(); // Eat first character   
       while (isalnum(currentChar()) || currentChar() == '_')
       {
          theIdentifier += currentChar();
-         nextChar();
+         nextChar(); // Eat character
       }
       return true;
    }
@@ -391,6 +392,7 @@ Assembler::parseIdentifier(
 bool
 Assembler::parseLine()
 {
+   const char* startOfLine = currentCharM;
    skipSpaces();
    if (isEndOfLine())
    {
@@ -468,7 +470,9 @@ Assembler::parseLine()
    {
       return false;
    }
-
+   const char* endOfLine = currentCharM - 1;
+   sourceCodeM[currentAddressM] = std::string(startOfLine, endOfLine);
+   printf("%04X: %04X \"%s\"\n", currentAddressM, code, sourceCodeM[currentAddressM].c_str());
    codeM[currentAddressM++] = code;
    return true;
 }

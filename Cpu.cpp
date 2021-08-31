@@ -235,15 +235,6 @@ Cpu::decodeAluInstruction()
 void
 Cpu::decodeBranchInstruction()
 {
-   size_t rAddress = (instructionM >> 7) & 0x007; 
-   uint16_t address = regM[rAddress];
-   uint16_t offset = instructionM & 0x007F;
-   if (offset & 0x0040)
-   {
-      // Negative offset - copy sign to most significant bits
-      offset |= 0xFF80;
-   }
-   regM[PcRegC] = address + offset;
    bool branch = false;
    switch ((instructionM >> 10) & 0x0003)
    {
@@ -290,6 +281,14 @@ Cpu::decodeBranchInstruction()
    }
    if (branch == true)
    {
+      size_t rAddress = (instructionM >> 7) & 0x007; 
+      uint16_t address = regM[rAddress];
+      uint16_t offset = instructionM & 0x007F;
+      if (offset & 0x0040)
+      {
+         // Negative offset - copy sign to most significant bits
+         offset |= 0xFF80;
+      }
       regM[PcRegC] = address + offset;
    }
    stateM = State::FetchInstrE;
@@ -454,9 +453,7 @@ Cpu::decodeOtherInstruction()
    {
       case 0x0000: // INC
       {
-         uint32_t tmpResult = src1 + 1;
-         setCarryAndOverflowFlag(tmpResult, src1, 1);
-         result = tmpResult & 0xFFFF;
+         result = src1 + 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
          break;
@@ -465,18 +462,18 @@ Cpu::decodeOtherInstruction()
       {
          break;
       }
-      case 0x0010: // CMP
-      {
-         uint32_t tmpResult = src1 - src2;
-         setCarryAndOverflowFlag(tmpResult, src1, src2);
-         result = tmpResult & 0xFFFF;
-         break;
-      }
-      case 0x0011: // DEC
+      case 0x0002: // CMP
       {
          uint32_t tmpResult = src1 - 1;
          setCarryAndOverflowFlag(tmpResult, src1, 1);
          result = tmpResult & 0xFFFF;
+         setZeroAndNegativeFlag(result);
+         regM[rDest] = result;
+         break;
+      }
+      case 0x0003: // DEC
+      {
+         result = src1 - 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
          break;
@@ -526,6 +523,7 @@ Cpu::decodeShiftInstruction()
       }
       case 0x0003: // ROR
       {
+         int nextCarry = (src & 0x0001 ? 1 : 0); 
          if (flagsM.carry == 0)
          {
             result = (src >> 1) & 0x7FFF;
@@ -534,11 +532,12 @@ Cpu::decodeShiftInstruction()
          {
             result = (src >> 1) | 0x8000;
          }
-         flagsM.carry = (src & 0x0001 ? 1 : 0);
+         flagsM.carry = nextCarry;
          break;
       }
       case 0x0004: // ROL
       {
+         int nextCarry = (src & 0x8000 ? 1 : 0); 
          if (flagsM.carry == 0)
          {
             result = (src << 1) & 0xFFFE;
@@ -547,7 +546,7 @@ Cpu::decodeShiftInstruction()
          {
             result = (src >> 1) | 0x0001;
          }
-         flagsM.carry = (src & 0x8000 ? 1 : 0);
+         flagsM.carry = nextCarry;
          break;
       }
       case 0x0005: // Spare

@@ -10,9 +10,11 @@ static const size_t ScreenHeightC = 30;
 static const size_t ScreenSizeC = ScreenWidthC * ScreenHeightC;
 
 CpuControlPanel::CpuControlPanel(
-   const Cpu&    theCpu,
-   const Memory& theMemory)
-:  cpuM(theCpu),
+   const Cpu&       theCpu,
+   const Memory&    theMemory,
+   const Assembler& theAssembler)
+:  assemblerM(theAssembler),
+   cpuM(theCpu),
    memoryM(theMemory)
 {
    screenMd = new char [ScreenWidthC * ScreenHeightC];
@@ -62,31 +64,31 @@ CpuControlPanel::draw() const
           flags.overflow);
    printf(1, 17, "             IF=%d", 
           flags.enableInterupt);
-   const char* state;
+   std::string state;
    switch (cpuM.getState())
    {
       case Cpu::State::FetchInstrE:
       {
-         state = "FetchInstr";
+         state = "FetchInstr   " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC));
          break;
       }
       case Cpu::State::DecodeInstrE: 
       {
-         state = "DecodeInstr";
+         state = "DecodeInstr  " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
       case Cpu::State::WaitReadMemE:
       {
-         state = "WaitReadMem";
+         state = "WaitReadMem  " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
       case Cpu::State::WaitWriteMemE:
       {
-         state = "WaitWriteMem";
+         state = "WaitWriteMem " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
    }
-   printf(1, 19, "State:       %s", state);
+   printf(1, 19, "State:       %s", state.c_str());
 
    // Print memory
    printf(30, 1, "Memory:");

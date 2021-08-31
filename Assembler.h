@@ -23,6 +23,9 @@ public:
    uint16_t
    getCodeLength() const;
 
+   const std::string&
+   getSourceCode(uint16_t theAddress) const;
+
    size_t
    getErrorLine() const;
 
@@ -212,6 +215,7 @@ private:
    skipSpaces();
 
    uint16_t          codeM[65536];
+   std::string       sourceCodeM[65536];
    uint16_t          currentAddressM;
    const char*       currentCharM;
    std::string       errorMessageM;
@@ -254,6 +258,15 @@ const std::string&
 Assembler::getErrorMessage() const
 {
    return errorMessageM;
+}
+
+// ----------------------------------------------------------------------------
+
+inline
+const std::string&
+Assembler::getSourceCode(uint16_t theAddress) const
+{
+   return sourceCodeM[theAddress];
 }
 
 // ----------------------------------------------------------------------------
