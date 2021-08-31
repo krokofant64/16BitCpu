@@ -39,37 +39,37 @@ CpuControlPanel::draw() const
    printf(1, 1, "Registers:");
    for (size_t i = 0; i < Cpu::NumRegsC; i++)
    {
-      printf(1, 2+i, "R%zu: %04X", i, cpuM.getRegister(i));
+      printf(10, 2+i, "R%zu: %04X", i, cpuM.getRegister(i));
       if (i == Cpu::PcRegC)
       {
-         printf(9, 2+i, " PC");
+         printf(19, 2+i, " PC");
       }
       else
       if ( i == Cpu::SpRegC)
       {
-         printf(9, 2+i, " SP");
+         printf(19, 2+i, " SP");
       }
    }
    
-   printf(1, 11, "Address:     %04X", cpuM.getAddressRegister());
-   printf(1, 12, "Instruction: %04X", cpuM.getInstruction());
    Cpu::Flags flags = cpuM.getFlags();
-   printf(1, 13, "Flags:       CF=%d", 
+   printf(7, 11, "Flags: CF=%d", 
           flags.carry);
-   printf(1, 14, "             ZF=%d", 
+   printf(7, 12, "       ZF=%d", 
           flags.zero);
-   printf(1, 15, "             NF=%d", 
+   printf(7, 13, "       NF=%d", 
           flags.negative);
-   printf(1, 16, "             OF=%d", 
+   printf(7, 14, "       OF=%d", 
           flags.overflow);
-   printf(1, 17, "             IF=%d", 
+   printf(7, 15, "       IF=%d", 
           flags.enableInterupt);
+   printf(5, 17, "Address: %04X", cpuM.getAddressRegister());
+   printf(1, 18, "Instruction: %04X", cpuM.getInstruction());
    std::string state;
    switch (cpuM.getState())
    {
       case Cpu::State::FetchInstrE:
       {
-         state = "FetchInstr   " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC));
+         state = "FetchInstr";
          break;
       }
       case Cpu::State::DecodeInstrE: 
@@ -88,7 +88,8 @@ CpuControlPanel::draw() const
          break;
       }
    }
-   printf(1, 19, "State:       %s", state.c_str());
+   printf(7, 19, "State: %s", state.c_str());
+   printf(8, 20, "Tick: %zu", cpuM.getTickCount());
 
    // Print memory
    printf(30, 1, "Memory:");

@@ -214,8 +214,8 @@ private:
    void
    skipSpaces();
 
-   uint16_t          codeM[65536];
-   std::string       sourceCodeM[65536];
+   uint16_t          codeM[1024];
+   std::string       sourceCodeM[1024];
    uint16_t          currentAddressM;
    const char*       currentCharM;
    std::string       errorMessageM;

@@ -59,6 +59,9 @@ public:
    State
    getState() const;
 
+   size_t
+   getTickCount() const;
+
    void
    setAddressRegister(
       uint16_t theValue);
@@ -133,6 +136,7 @@ private:
    Flags      flagsM;   
    uint16_t   instructionM;
    State      stateM;
+   size_t     tickCountM;
 };
 
 // ----------------------------------------------------------------------------
@@ -179,6 +183,15 @@ Cpu::State
 Cpu::getState() const
 {
    return stateM;
+}
+
+// ----------------------------------------------------------------------------
+
+inline
+size_t
+Cpu::getTickCount() const
+{
+   return tickCountM;
 }
 
 // ----------------------------------------------------------------------------

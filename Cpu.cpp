@@ -25,6 +25,7 @@ Cpu::reset()
    flagsM.negative = 0;
    flagsM.overflow = 0;
    stateM = State::FetchInstrE;
+   tickCountM = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -32,6 +33,7 @@ Cpu::reset()
 void
 Cpu::clockTick()
 {
+   tickCountM++;
    switch (stateM)
    {
       case State::FetchInstrE:
@@ -236,7 +238,7 @@ void
 Cpu::decodeBranchInstruction()
 {
    bool branch = false;
-   switch ((instructionM >> 10) & 0x0003)
+   switch ((instructionM >> 10) & 0x0007)
    {
       case 0x0000: // BCS
       {
@@ -464,16 +466,16 @@ Cpu::decodeOtherInstruction()
       }
       case 0x0002: // CMP
       {
-         uint32_t tmpResult = src1 - 1;
-         setCarryAndOverflowFlag(tmpResult, src1, 1);
-         result = tmpResult & 0xFFFF;
+         result = src1 - 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
          break;
       }
       case 0x0003: // DEC
       {
-         result = src1 - 1;
+         uint32_t tmpResult = src1 - 1;
+         setCarryAndOverflowFlag(tmpResult, src1, 1);
+         result = tmpResult & 0xFFFF;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
          break;
