@@ -548,7 +548,7 @@ Cpu::decodeShiftInstruction()
          }
          else
          {
-            result = (src >> 1) | 0x0001;
+            result = (src << 1) | 0x0001;
          }
          flagsM.carry = nextCarry;
          break;
