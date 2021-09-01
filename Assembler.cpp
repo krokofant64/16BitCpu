@@ -20,8 +20,8 @@ Assembler::Assembler()
    opcodeTableM.addOpcode("LDH",  Opcode::Format::Reg32E,      0x000A, 0xE00F);
    opcodeTableM.addOpcode("SWP",  Opcode::Format::Reg32E,      0x000B, 0xE00F);
    opcodeTableM.addOpcode("INC",  Opcode::Format::Reg32E,      0x000C, 0xE00F);
-   opcodeTableM.addOpcode("DEC",  Opcode::Format::Reg32E,      0x000E, 0xE00F);
-   opcodeTableM.addOpcode("CMP",  Opcode::Format::Reg21E,      0x000F, 0xE00F);
+   opcodeTableM.addOpcode("CMP",  Opcode::Format::Reg21E,      0x000E, 0xE00F);
+   opcodeTableM.addOpcode("DEC",  Opcode::Format::Reg32E,      0x000F, 0xE00F);
    opcodeTableM.addOpcode("SHR",  Opcode::Format::Reg32E,      0x2000, 0xE00F);
    opcodeTableM.addOpcode("SHL",  Opcode::Format::Reg32E,      0x2001, 0xE00F);
    opcodeTableM.addOpcode("ASHL", Opcode::Format::Reg32E,      0x2001, 0xE00F); // == SHL
@@ -53,6 +53,7 @@ Assembler::Assembler()
    opcodeTableM.addOpcode("JSR",  Opcode::Format::Reg3Offs10E, 0xA000, 0xE000);
    opcodeTableM.addOpcode("LD",   Opcode::Format::Reg32Offs7E, 0xC000, 0xE000);
    opcodeTableM.addOpcode("STO",  Opcode::Format::Reg32Offs7E, 0xE000, 0xE000);
+   opcodeTableM.addOpcode("HLT",  Opcode::Format::NoArgE,      0x9FFF, 0xFFFF);
 }
 
 // ----------------------------------------------------------------------------

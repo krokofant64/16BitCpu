@@ -434,7 +434,6 @@ Cpu::decodeLoadInstruction()
       offset |= 0xFF80;
    }
    addressRegM = address + offset;
-printf("LD Mem[R%d+%d] (addressRegM=%d)\n", rAddress, offset, addressRegM);
    memoryApiM->setAddress(addressRegM);
    stateM = State::WaitReadMemE;
 }
@@ -455,6 +454,7 @@ Cpu::decodeOtherInstruction()
    {
       case 0x0000: // INC
       {
+         printf("<INC>\n");
          result = src1 + 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
@@ -462,20 +462,22 @@ Cpu::decodeOtherInstruction()
       }
       case 0x0001: // spare
       {
+         printf("<SPARE>\n");
          break;
       }
       case 0x0002: // CMP
       {
-         result = src1 - 1;
+         printf("<CMP>\n");
+         uint32_t tmpResult = src1 - src2;
+         setCarryAndOverflowFlag(tmpResult, src1, src2);
+         result = tmpResult & 0xFFFF;
          setZeroAndNegativeFlag(result);
-         regM[rDest] = result;
          break;
       }
       case 0x0003: // DEC
       {
-         uint32_t tmpResult = src1 - 1;
-         setCarryAndOverflowFlag(tmpResult, src1, 1);
-         result = tmpResult & 0xFFFF;
+         printf("<DEC>\n");
+         result = src1 - 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
          break;

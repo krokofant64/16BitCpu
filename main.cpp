@@ -7,7 +7,7 @@
 static const char* TestC = "L1: LD R0 N1\n"
                            "    LD R1 N2; \n"
                            "    ADD R2 R1 R0\n"
-                           "    JMP L1\n"
+                           "    HLT\n"
                            "N1: .data 0x1234\n"
                            "N2: .data 0x0001\n";
 
@@ -23,9 +23,27 @@ static const char* MultiplyC = "Start:   LD R0 Op1\n"
                                "         ROR R2 R2\n"
                                "         DEC R3 R3\n"
                                "         BZC BitLoop\n"
-                               "         JMP Start\n"
+                               "         HLT\n"
                                "Op1:     .data 500\n"
                                "Op2:     .data 13\n";
+
+static const char* DivideC =   "Start:   LD R0 Q\n"
+                               "         LD R2 M\n"
+                               "; R0 / R2 -> R0 remainder R1; temp R3\n"
+                               "         LDLZ R1 0; A\n"
+                               "         LDLZ R3 16; N\n"
+                               "         SHL R0 R0\n"
+                               "BitLoop: ROL R1 R1\n"
+                               "         CMP R1 R2\n"
+                               "         BCC NoSub\n"
+                               "         SBC R1 R1 R2\n"
+                               "NoSub:   ROL R0 R0\n"
+                               "         DEC R3 R3\n"
+                               "         BZC BitLoop\n"
+                               "         HLT\n"
+                               "Q:       .data 100\n"
+                               "M:       .data 13\n";
+
 
 int
 main(
@@ -36,7 +54,7 @@ main(
 
    Assembler assembler;
 
-   if (assembler.parse(MultiplyC) == false)
+   if (assembler.parse(DivideC) == false)
    {
       printf("Error in line %zu: %s\n", assembler.getErrorLine(),
                                         assembler.getErrorMessage().c_str());
