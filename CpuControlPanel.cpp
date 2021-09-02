@@ -74,17 +74,22 @@ CpuControlPanel::draw() const
       }
       case Cpu::State::DecodeInstrE: 
       {
-         state = "DecodeInstr  " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
+         state = "DecodeInstr            " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
       case Cpu::State::WaitReadMemE:
       {
-         state = "WaitReadMem  " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
+         state = "WaitReadMem            " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
       case Cpu::State::WaitWriteMemE:
       {
-         state = "WaitWriteMem " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
+         state = "WaitWriteMem           " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
+         break;
+      }
+      case Cpu::State::WaitWriteReturnAddressE:
+      {
+         state = "WaitWriteReturnAddress " + assemblerM.getSourceCode(cpuM.getRegister(Cpu::PcRegC) - 1);
          break;
       }
    }

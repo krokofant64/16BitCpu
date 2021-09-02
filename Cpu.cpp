@@ -60,6 +60,11 @@ Cpu::clockTick()
          writeMemReady();
          break;
       }
+      case State::WaitWriteReturnAddressE:
+      {
+         writeReturnAddressReady();
+         break;
+      }
    }
 }
 
@@ -116,6 +121,7 @@ Cpu::decodeInstruction()
             case 0x0003:
             {
                // Stack instructions (PSH, POP, RET, RTI)
+               decodeStackInstruction();
                break;
             }
          }
@@ -142,6 +148,7 @@ Cpu::decodeInstruction()
       case 0x0005:
       {
          // Jump subroutine instruction (JSR)
+         decodeJsrInstruction();
          break;
       }
       case 0x0006:
@@ -324,6 +331,7 @@ Cpu::decodeFlagInstruction()
          break;
       }
    }
+   stateM = State::FetchInstrE;
 }
 
 // ----------------------------------------------------------------------------
@@ -423,6 +431,18 @@ Cpu::decodeJmpInstruction()
 // ----------------------------------------------------------------------------
 
 void
+Cpu::decodeJsrInstruction()
+{
+   addressRegM = regM[SpRegC];
+   memoryApiM->setAddress(addressRegM);
+   regM[SpRegC] -= 1;
+
+   stateM = State::WaitWriteReturnAddressE;
+}
+
+// ----------------------------------------------------------------------------
+
+void
 Cpu::decodeLoadInstruction()
 {
    uint16_t rAddress = (instructionM >> 7) & 0x007; 
@@ -454,7 +474,6 @@ Cpu::decodeOtherInstruction()
    {
       case 0x0000: // INC
       {
-         printf("<INC>\n");
          result = src1 + 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
@@ -462,12 +481,10 @@ Cpu::decodeOtherInstruction()
       }
       case 0x0001: // spare
       {
-         printf("<SPARE>\n");
          break;
       }
       case 0x0002: // CMP
       {
-         printf("<CMP>\n");
          uint32_t tmpResult = src1 - src2;
          setCarryAndOverflowFlag(tmpResult, src1, src2);
          result = tmpResult & 0xFFFF;
@@ -476,7 +493,6 @@ Cpu::decodeOtherInstruction()
       }
       case 0x0003: // DEC
       {
-         printf("<DEC>\n");
          result = src1 - 1;
          setZeroAndNegativeFlag(result);
          regM[rDest] = result;
@@ -569,9 +585,45 @@ Cpu::decodeShiftInstruction()
 // ----------------------------------------------------------------------------
 
 void
+Cpu::decodeStackInstruction()
+{
+   size_t reg = (instructionM >> 10) & 0x007; 
+
+   switch (instructionM & 0x0003)
+   {
+      case 0x0000: // PSH
+      {
+         addressRegM = regM[SpRegC];
+         memoryApiM->setAddress(addressRegM);
+         regM[SpRegC] -= 1;
+         stateM = State::WaitWriteMemE;
+         break;
+      }
+      case 0x0001: // POP; RET
+      {
+         regM[SpRegC] += 1;
+         addressRegM = regM[SpRegC];
+         memoryApiM->setAddress(addressRegM);
+         stateM = State::WaitReadMemE;
+         break;
+      }
+      case 0x0002: // RTI
+      {
+         break;
+      }
+      case 0x0003: // Spare
+      {
+         break;
+      }
+   }
+}
+
+// ----------------------------------------------------------------------------
+
+void
 Cpu::decodeStoreInstruction()
 {
-   size_t rAddress = (instructionM >> 7) & 0x003; 
+   size_t rAddress = (instructionM >> 7) & 0x007; 
    uint16_t address = regM[rAddress];
    uint16_t offset = instructionM & 0x007F;
    if (offset & 0x0040)
@@ -604,6 +656,24 @@ Cpu::writeMemReady()
 {
    size_t rDest = (instructionM >> 10) & 0x007; 
    memoryApiM->write(regM[rDest]);
+   stateM = State::FetchInstrE;   
+}
+
+// ----------------------------------------------------------------------------
+
+void
+Cpu::writeReturnAddressReady()
+{
+   memoryApiM->write(regM[PcRegC]);
+   size_t rAddress = (instructionM >> 10) & 0x007; 
+   uint16_t address = regM[rAddress];
+   uint16_t offset = instructionM & 0x03FF;
+   if (offset & 0x0200)
+   {
+      // Negative offset - copy sign to most significant bits
+      offset |= 0xFC00;
+   }
+   regM[PcRegC] = address + offset;
    stateM = State::FetchInstrE;   
 }
 

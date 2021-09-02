@@ -771,7 +771,7 @@ Assembler::parseReg3Offs10(
    uint16_t r3;
    uint16_t offset;
    skipSpaces();
-   if (parseAddress(0x02FFF, r3, offset) == true)
+   if (parseAddress(0x03FF, r3, offset) == true)
    {
       skipSpaces();
       if (isEndOfLine() == true)

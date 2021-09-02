@@ -26,7 +26,8 @@ public:
       FetchInstrE, 
       DecodeInstrE, 
       WaitReadMemE,
-      WaitWriteMemE
+      WaitWriteMemE,
+      WaitWriteReturnAddressE
    };
 
    explicit 
@@ -100,10 +101,16 @@ private:
    decodeJmpInstruction();
 
    void
+   decodeJsrInstruction();
+
+   void
    decodeLoadInstruction();
 
    void
    decodeOtherInstruction();
+
+   void
+   decodeStackInstruction();
 
    void
    decodeShiftInstruction();
@@ -116,6 +123,9 @@ private:
 
    void
    writeMemReady();
+
+   void
+   writeReturnAddressReady();
 
    void
    setZeroAndNegativeFlag(
