@@ -27,7 +27,8 @@ static const char* Test2C = "      LDLZ SP 0x1F\n"
                             "      JSR Swap\n"
                             "      HLT\n"
                             "Swap: SWP R0 R0\n"
-                            "      POP PC\n";
+                            "      RET\n"
+                            "Str1: .string \"Hello\"";
 
 
 static const char* TestC = "L1:   LD R0 N1\n"
@@ -42,7 +43,7 @@ static const char* TestC = "L1:   LD R0 N1\n"
                            "      JSR Sum\n"
                            "      HLT\n"
                            "Sum:  ADD R2 R2 R2\n"
-                           "      POP PC\n"  
+                           "      RET\n"  
                            "N1:  .data 0x1234\n"
                            "N2:  .data 0x0001\n"
                            "Res: .data 0\n";

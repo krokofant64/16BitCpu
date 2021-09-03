@@ -34,7 +34,7 @@ Assembler::Assembler()
    opcodeTableM.addOpcode("SEC",  Opcode::Format::NoArgE,      0x200B, 0xE00F);
    opcodeTableM.addOpcode("PSH",  Opcode::Format::Reg3E,       0x200C, 0xE00F);
    opcodeTableM.addOpcode("POP",  Opcode::Format::Reg3E,       0x200D, 0xE00F); // R3 != PC
-   opcodeTableM.addOpcode("RET",  Opcode::Format::Reg3E,       0x200D, 0xE00F); // R3 == PC
+   opcodeTableM.addOpcode("RET",  Opcode::Format::NoArgE,      0x3C0D, 0xFFFF); // R3 == PC
    opcodeTableM.addOpcode("RTI",  Opcode::Format::Reg3E,       0x200E, 0xE00F); 
    opcodeTableM.addOpcode("BCS",  Opcode::Format::Reg2Offs7E,  0x4000, 0xFC00);
    opcodeTableM.addOpcode("BCC",  Opcode::Format::Reg2Offs7E,  0x4400, 0xFC00);
@@ -326,6 +326,28 @@ Assembler::parseDirective()
       if (isEndOfLine() == false)
       {
          errorMessageM = "Data, comment, or end-of-line expected.";
+         return false;
+      }
+   }
+   else if (directive == "string")
+   {
+      std::string string;
+      if (parseString(string) == false)
+      {
+         return false;
+      }
+      size_t numberOfWords = string.size() / 2;
+      for (size_t i = 0; i < numberOfWords; i++)
+      {
+         uint16_t word = (string[i * 2] << 8) & 0xFF00;
+         word |= (string[i * 2 + 1] & 0x00FF);
+         codeM[currentAddressM++] = word;
+      }
+      if ((string.size() & 0x0001) != 0)
+      {
+         // Odd length;  
+         uint16_t word = (string[string.size() -1] << 8) & 0xFF00;
+         codeM[currentAddressM++] = word;
       }
    }
    return true;
@@ -824,6 +846,46 @@ Assembler::parseRegister(
       }
    }
    setParsePointer(parsePointer);
+   return false;
+}
+
+// ----------------------------------------------------------------------------
+
+bool
+Assembler::parseString(
+   std::string& theString)
+{
+   theString.clear();
+   skipSpaces();
+   if (currentChar() != '"')
+   {
+      errorMessageM = "'\"' expected.";
+   }
+   nextChar(); // Eat '"'
+   while (isprint(currentChar()))
+   {
+      switch (currentChar())
+      {
+         case '"':
+         {
+            nextChar(); // Eat '"'
+            return true;
+         } 
+         case '\\':
+         {
+            // TODO: Handle escape sequences
+            nextChar(); // Eat '\'
+            break;
+         }
+         default:
+         {
+            theString += currentChar();
+            nextChar();
+            break;
+         }
+      }
+   }
+   errorMessageM = "Invalid character in string."; 
    return false;
 }
 

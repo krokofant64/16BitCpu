@@ -158,6 +158,10 @@ private:
       uint16_t& theRegister);
 
    bool
+   parseString(
+      std::string& theString);
+
+   bool
    findLabel(
       const std::string& theLabel,
       uint16_t           theMask,
