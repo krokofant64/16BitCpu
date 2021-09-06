@@ -45,5 +45,41 @@ Modified flags: C, Z, N, O
 ### INC - Increment register
 ### DEC - Decrement register
 ### CMP - Compare register
-
-
+## Shift Instructions
+### SHR - Logic shift right
+### SHL, ASHL - Logic and arithmetic shift left
+### ASHR - Arithmetic shif right
+### ROR - Rotate right
+### ROL - Rotate left
+## Flag Manipulation Instructions
+### CLC - Clear carry flag
+### SEC - Set carry flag
+### CLI - Clear interrupt enable flag
+### SEI - Set interrupt enable flag
+## Stack Instructions
+### PSH - Push to stack
+### POP - Pop from stack
+### RET - Retiurn from subroutine
+### RTI - Return from interrupt
+## Conditional Branch Instructions
+### BCS - Branch if carry flag is set
+### BCC - Branch if carry flag is clear
+### BZS - Branch if zero flag is set
+### BZC - Branch if zero flag is clear
+### BNS - Branch if negative flag is set
+### BNC - Branch if negative flag is clear
+### BOS - Branch if overflow flag is set
+### BOC - Branch if overflow flag is clear
+## Load Immediate Value Instructions
+### LDL - Load low byte from immediate value
+### LDH - Load high byte from immediate value
+### LDLZ - Load loaw byte from immediate value and clear high byte
+### LDHZ - Load high byte from immediate value and clear low byte
+## Jump Instruction
+### JMP - Jump
+## Jump to Subroutine Instruction
+### JSR - Jump to subroutine
+## Load from Memory Instruction
+### LD - Load from memory
+## Store in Memory Instruction
+### STO - Store in memory
