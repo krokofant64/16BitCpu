@@ -60,7 +60,7 @@ Modified flags: C, Z, N, O
 ## Stack Instructions
 ### PSH - Push to stack
 ### POP - Pop from stack
-### RET - Retiurn from subroutine
+### RET - Return from subroutine
 ### RTI - Return from interrupt
 ## Conditional Branch Instructions
 ### BCS - Branch if carry flag is set
