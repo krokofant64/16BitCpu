@@ -34,18 +34,64 @@ RDest = RSrc1 - RSrc2 - C
 Modified flags: C, Z, N, O
 
 ### AND - Logical AND
+RDest = RSrc1 and RSrc2
+
+Modified flags: Z, N
+
 ### OR - Logical OR
+RDest = RSrc1 or RSrc2
+
+Modified flags: Z, N
+
 ### XOR - Logical XOR
+RDest = RSrc1 xor RSrc2
+
+Modified flags: Z, N
+
 ### NOT - Logical NOT
+RDest = not RSrc
+
+Modified flags: Z, N
+
 ## Load from Register Instructions
 ### LD - Load from register
+RDest = RSrc
+
+Modified flags: Z, N
+
 ### LDL - Load low byte from register
+RDest.low_byte = RSrc.low_byte
+
+Modified flags: Z, N
+
 ### LDH - Load high byte from register
+RDest.high_byte = RSrc.low_byte
+
+Modified flags: Z, N
+
 ### SWP - Load swapped bytes from register
+RDest.hight_byte = RSrc.low_byte
+
+RDest.low_byte = RSrc.high_byte
+
+Modified flags: Z, N
+
 ## Other Arithmetic Instructions
 ### INC - Increment register
+RDest = RSrc + 1
+
+Modified flags: Z, N
+
 ### DEC - Decrement register
+RDest = RSrc - 1
+
+Modified flags: Z, N
+
 ### CMP - Compare register
+RSrc - RSrc2
+
+Modified flags: C, Z, N, O
+
 ## Shift Instructions
 ### SHR - Logic shift right
 ### SHL, ASHL - Logic and arithmetic shift left
