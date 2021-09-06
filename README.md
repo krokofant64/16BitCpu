@@ -1,5 +1,6 @@
 # KF16 - 16-bit CPU
 The goal of this project is to design a simple 16-bit CPU, the KF16 (short for KrokoFant16 :smile:).
+
 The CPU has a RISC inspired instruction set and it can address up to 64 K of 16-bit words.
 
 The table below shows the encoding of the instructions and their mnemonics:
