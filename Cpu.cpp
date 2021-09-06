@@ -212,25 +212,21 @@ Cpu::decodeAluInstruction()
       case 0x0004: // AND
       {
          result = (regM[rSrc1] & regM[rSrc2]);
-         clearCarryAndOverflowFlag();
          break;
       }
       case 0x0005: // OR
       {
          result = (regM[rSrc1] | regM[rSrc2]);
-         clearCarryAndOverflowFlag();
          break;
       }
       case 0x0006: // XOR
       {
          result = (regM[rSrc1] ^ regM[rSrc2]);
-         clearCarryAndOverflowFlag();
          break;
       }
       case 0x0007: // NOT
       {
          result = ~regM[rSrc1];
-         clearCarryAndOverflowFlag();
          break;
       }
    }
@@ -382,7 +378,6 @@ Cpu::decodeImmediateInstruction()
    uint16_t imm = (instructionM & 0x00FF);
    uint16_t result;
 
-   clearCarryAndOverflowFlag();
    switch ((instructionM >> 8) & 0x0003)
    {
       case 0x0000: // LDL
@@ -644,7 +639,6 @@ Cpu::readMemReady()
    size_t rDest = (instructionM >> 10) & 0x007; 
    regM[rDest] = memoryApiM->read();
    setZeroAndNegativeFlag(regM[rDest]);
-   clearCarryAndOverflowFlag();
    
    stateM = State::FetchInstrE;   
 }
@@ -702,15 +696,6 @@ Cpu::setCarryAndOverflowFlag(
    flagsM.carry = (theTempResult & 0x10000 ? 1 : 0);
    flagsM.overflow = (  src1Negative &    src2Negative  & (~resultNegative)) ||
                      ((~src1Negative) & ~(src2Negative) &   resultNegative);
-}
-
-// ----------------------------------------------------------------------------
-
-void
-Cpu::clearCarryAndOverflowFlag()
-{
-   flagsM.carry = 0;
-   flagsM.overflow = 0;
 }
 
 

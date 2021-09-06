@@ -137,9 +137,6 @@ private:
       uint16_t theSrc1,
       uint16_t theSrc2);
 
-   void
-   clearCarryAndOverflowFlag();
-
    MemoryApi* memoryApiM;
    uint16_t   regM[NumRegsC];
    uint16_t   addressRegM;
