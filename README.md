@@ -1,7 +1,15 @@
-# KF16 - 16-bit CPU
-The goal of this project is to design a simple 16-bit CPU, the KF16 (short for KrokoFant16 :smile:).
+# K16 - 16-bit CPU
+The goal of this project is to design a simple 16-bit CPU, the K16 (short for Krokofant16 :smile:).
 
 The CPU has a RISC inspired instruction set and it can address up to 64 K of 16-bit words.
+
+The CPU has 7 16-bit registers:
+
+R1 .. R5 are general purpose registers.
+
+R6 (SP) is used as stack pointer.
+
+R7 (PC) is used as program counter.
 
 The table below shows the encoding of the instructions and their mnemonics:
 
@@ -290,15 +298,61 @@ SEI
 ```
 ## Stack Instructions
 ### PSH - Push to stack
+Operation
+```
+mem[SP] = R_src
+SP = SP - 1
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+PSH R4
+```
 ### POP - Pop from stack
+Operation
+```
+SP = SP + 1
+R_dest = mem[SP]
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+POP R4
+```
 ### RET - Return from subroutine
+Operation
+```
+SP = SP + 1
+PC = mem[SP]
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+RET
+```
 ### RTI - Return from interrupt
 ## Conditional Branch Instructions
 ### BCS - Branch if carry flag is set
 Operation
 ```
 if C == 1 then
-   PC = R_base + offset
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
 endif
 ```
 Flags
@@ -314,7 +368,11 @@ BCS PC +5
 Operation
 ```
 if C == 0 then
-   PC = R_base + offset
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
 endif
 ```
 Flags
@@ -406,13 +464,53 @@ LDHZ R4 128
 ```
 ## Jump Instruction
 ### JMP - Jump
+Operation
+```
+if R_base == PC then
+   PC = PC + 1 + offset
+else
+   PC = R_base + offset
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+JMP R3 127
+```
 ## Jump to Subroutine Instruction
 ### JSR - Jump to subroutine
+Operation
+```
+mem[SP] = PC + 1
+SP = SP - 1
+if R_base == PC then
+   PC = PC + 1 + offset
+else
+   PC = R_base + offset
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+JSR R3 127
+```
 ## Load from Memory Instruction
 ### LD - Load from memory
 Operation
 ```
-R_dest = mem[R_base + offset]
+if R_base == PC then
+   R_dest = mem[PC + 1 + offset]
+else
+   R_dest = mem[R_base + offset]
+endif
 ```
 Flags
 ```
@@ -427,7 +525,11 @@ LD R4 [SP -2]
 ### STO - Store in memory
 Operation
 ```
-mem[R_base + offset] = R_src
+if R_base == PC then
+   mem[PC + 1 + offset] = R_src
+else
+   mem[R_base + offset] = R_src
+endif
 ```
 Flags
 ```
