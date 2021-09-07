@@ -343,6 +343,21 @@ Example:
 RET
 ```
 ### RTI - Return from interrupt
+Operation
+```
+SP = SP + 1
+PC = mem[SP]
+I = 1
+```
+Flags
+```
+N Z C O I
++ + - - 1
+```
+Example: 
+```
+RET
+```
 ## Conditional Branch Instructions
 ### BCS - Branch if carry flag is set
 Operation
