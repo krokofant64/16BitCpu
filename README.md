@@ -3,13 +3,13 @@ The goal of this project is to design a simple 16-bit CPU, the K16 (short for Kr
 
 The CPU has a RISC inspired instruction set and it can address up to 64 K of 16-bit words.
 
-The CPU has 7 16-bit registers:
+The CPU has eight 16-bit registers:
 
-R1 .. R5 are general purpose registers.
+* R1 .. R5 are general purpose registers
 
-R6 (SP) is used as stack pointer.
+* R6 (SP) is used as stack pointer
 
-R7 (PC) is used as program counter.
+* R7 (PC) is used as program counter
 
 The table below shows the encoding of the instructions and their mnemonics:
 
