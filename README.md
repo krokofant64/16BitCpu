@@ -334,9 +334,76 @@ BCC R2 +17
 ### BOC - Branch if overflow flag is clear
 ## Load Immediate Value Instructions
 ### LDL - Load low byte from immediate value
+Operation
+```
+R_dest.low_byte = immediate
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+LDL R4 128
+```
 ### LDH - Load high byte from immediate value
-### LDLZ - Load loaw byte from immediate value and clear high byte
+Operation
+```
+R_dest.high_byte = immediate
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+LDL R4 128
+```
+Operation
+```
+R_dest.low_byte = immediate
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+LDH R4 16
+```
+### LDLZ - Load low byte from immediate value and clear high byte
+Operation
+```
+R_dest.low_byte = immediate
+R_dest.high_byte = 0
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+LDLZ R4 128
+```
 ### LDHZ - Load high byte from immediate value and clear low byte
+Operation
+```
+R_dest.low_byte = 0
+R_dest.high_byte = immediate
+```
+Flags
+```
+N Z C O I
++ + - - -
+```
+Example: 
+```
+LDHZ R4 128
+```
 ## Jump Instruction
 ### JMP - Jump
 ## Jump to Subroutine Instruction
