@@ -83,19 +83,33 @@ static const char* DivideC =   "Start:   LD R1 Q\n"
                                "M:       .data 13\n";
 
 
+void
+usage(
+   const char* theProgram)
+{
+   fprintf(stderr, "Usage: %s <input file>\n", theProgram);
+}
+
+// ----------------------------------------------------------------------------
+
 int
 main(
    int argc, char* argv[])
 {
+   if (argc != 2)
+   {
+      usage(argv[0]);
+      return 1;
+   }
    (void) argc;
    (void) argv;
 
    Assembler assembler;
 
-   if (assembler.parse(Test2C) == false)
+   if (assembler.parseFile(argv[1]) == false)
    {
-      printf("Error in line %zu: %s\n", assembler.getErrorLine(),
-                                        assembler.getErrorMessage().c_str());
+      fprintf(stderr, "Error in line %zu: %s\n", assembler.getErrorLine(),
+                                                 assembler.getErrorMessage().c_str());
       return 1;
    }
 
@@ -106,14 +120,8 @@ main(
    CpuControlPanel controlPanel(cpu, memory, assembler);
 
    memory.writeData(0x0000, assembler.getCode(), assembler.getCodeLength());
-//   memory.writeBinary(0x0000, "110 000 111 0000111");
-//   memory.writeBinary(0x0001, "110 001 111 0000111");
-//   memory.writeBinary(0x0002, "000 010 000 001 0000");
 
-//   memory.writeHex(0x0008, 0x1234);
-//   memory.writeHex(0x0009, 0x0001);
-
-         controlPanel.draw();
+   controlPanel.draw();
 
    while (true)
    {

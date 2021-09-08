@@ -14,6 +14,10 @@ public:
    Assembler();
 
    bool
+   parseFile(
+      const std::string& theFileName);
+
+   bool
    parse(
       const std::string& theAssemblyCode);
 

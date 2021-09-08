@@ -59,6 +59,43 @@ Assembler::Assembler()
 // ----------------------------------------------------------------------------
 
 bool
+Assembler::parseFile(
+   const std::string& theFileName)
+{
+   FILE* fd = fopen(theFileName.c_str(), "rb");
+   if (fd == nullptr)
+   {
+      errorMessageM = "Can't open input fil \"" + theFileName + "\".";
+      return false;
+   }
+   
+   std::string assemblyCode;
+   char buffer[1024];
+   while (true)
+   {
+      size_t numberOfBytesRead = fread(buffer, 1, sizeof(buffer), fd);
+      if (numberOfBytesRead == sizeof(buffer))
+      {
+         assemblyCode.append(buffer, numberOfBytesRead);
+      }
+      else
+      {
+         if (numberOfBytesRead > 0)
+         {
+            assemblyCode.append(buffer, numberOfBytesRead);
+         }
+         break;
+      }
+   }
+   
+   fclose(fd);
+   return parse(assemblyCode);
+}
+
+
+// ----------------------------------------------------------------------------
+
+bool
 Assembler::parse(
    const std::string& theAssemblyCode)
 {
