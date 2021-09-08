@@ -453,11 +453,126 @@ Example:
 BCC R2 +17
 ```
 ### BZS - Branch if zero flag is set
+Operation
+```
+if Z == 1 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BZS PC +5
+```
+
 ### BZC - Branch if zero flag is clear
+Operation
+```
+if Z == 0 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BZC R2 +17
+```
 ### BNS - Branch if negative flag is set
+Operation
+```
+if N == 1 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BNS PC +5
+```
 ### BNC - Branch if negative flag is clear
+Operation
+```
+if N == 0 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BNC R2 +17
+```
 ### BOS - Branch if overflow flag is set
+Operation
+```
+if O == 1 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BOS PC +5
+```
 ### BOC - Branch if overflow flag is clear
+Operation
+```
+if O == 0 then
+   if R_base == PC then
+      PC = PC + 1 + offset
+   else
+      PC = R_base + offset
+   endif
+endif
+```
+Flags
+```
+N Z C O I
+- - - - -
+```
+Example: 
+```
+BOC R2 +17
+```
 ## Load Immediate Value Instructions
 ### LDL - Load low byte from immediate value
 Operation
