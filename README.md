@@ -235,9 +235,54 @@ CMP R3 R2
 ```
 ## Shift Instructions
 ### SHR - Logic shift right
+Operation
+```
+R_dest = SHR(R_src)
+```
+![SHR](https://github.com/krokofant64/16BitCpu/blob/master/doc/SHR.png "Logic shift right")
+
+Flags
+```
+N Z C O I
++ + + - -
+```
+Example: 
+```
+SHR R2 R1
+```
 ### SHL, ASHL - Logic and arithmetic shift left
 ### ASHR - Arithmetic shift right
+Operation
+```
+R_dest = ASHR(R_src)
+```
+![ASHR](https://github.com/krokofant64/16BitCpu/blob/master/doc/ASR.png "Arithmetic shift right")
+
+Flags
+```
+N Z C O I
++ + + - -
+```
+Example: 
+```
+ASHR R2 R1
+```
 ### ROR - Rotate right
+Operation
+```
+R_dest = ROR(R_src)
+```
+![ROR](https://github.com/krokofant64/16BitCpu/blob/master/doc/ROR.png "Rotate right")
+
+Flags
+```
+N Z C O I
++ + + - -
+```
+Example: 
+```
+ROR R2 R1
+```
 ### ROL - Rotate left
 ## Flag Manipulation Instructions
 ### CLC - Clear carry flag
