@@ -259,6 +259,21 @@ Example:
 SHR R2 R1
 ```
 ### SHL, ASHL - Logic and arithmetic shift left
+Operation
+```
+R_dest = SHL(R_src)
+```
+![SHL](https://github.com/krokofant64/16BitCpu/blob/master/doc/SHL.png "Logic shift left")
+
+Flags
+```
+N Z C O I
++ + + - -
+```
+Example: 
+```
+SHL R2 R1
+```
 ### ASHR - Arithmetic shift right
 Operation
 ```
@@ -292,6 +307,21 @@ Example:
 ROR R2 R1
 ```
 ### ROL - Rotate left
+Operation
+```
+R_dest = ROL(R_src)
+```
+![ROL](https://github.com/krokofant64/16BitCpu/blob/master/doc/ROL.png "Rotate left")
+
+Flags
+```
+N Z C O I
++ + + - -
+```
+Example: 
+```
+ROL R2 R1
+```
 ## Flag Manipulation Instructions
 ### CLC - Clear carry flag
 Operation
