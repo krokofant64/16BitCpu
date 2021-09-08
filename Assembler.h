@@ -15,7 +15,7 @@ public:
 
    bool
    parseFile(
-      const std::string& theFileName);
+      const std::string& theInputFileName);
 
    bool
    parse(
@@ -292,8 +292,10 @@ inline
 bool
 Assembler::isEndOfLine()
 {
-   if (currentChar() == ';' || 
-       currentChar() == 0   ||
+   skipSpaces();
+   if (currentChar() == ';'  || 
+       currentChar() == 0    ||
+       currentChar() == '\r' ||
        currentChar() == '\n')
    { 
       while (currentChar() != '\n')

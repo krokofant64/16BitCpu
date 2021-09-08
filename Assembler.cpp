@@ -60,12 +60,12 @@ Assembler::Assembler()
 
 bool
 Assembler::parseFile(
-   const std::string& theFileName)
+   const std::string& theInputFileName)
 {
-   FILE* fd = fopen(theFileName.c_str(), "rb");
+   FILE* fd = fopen(theInputFileName.c_str(), "rb");
    if (fd == nullptr)
    {
-      errorMessageM = "Can't open input fil \"" + theFileName + "\".";
+      errorMessageM = "Can't open input file \"" + theInputFileName + "\".";
       return false;
    }
    
@@ -359,7 +359,8 @@ Assembler::parseDirective()
          }
          skipSpaces();
          codeM[currentAddressM++] = number & 0xFFFF;
-      } while (currentChar() == ',');
+      } 
+      while (currentChar() == ',');
       if (isEndOfLine() == false)
       {
          errorMessageM = "Data, comment, or end-of-line expected.";
@@ -532,7 +533,6 @@ Assembler::parseLine()
    }
    const char* endOfLine = currentCharM - 1;
    sourceCodeM[currentAddressM] = std::string(startOfLine, endOfLine);
-   printf("%04X: %04X \"%s\"\n", currentAddressM, code, sourceCodeM[currentAddressM].c_str());
    codeM[currentAddressM++] = code;
    return true;
 }
@@ -583,6 +583,7 @@ Assembler::parseOctalNumber(
    while (currentChar() >= '0' && currentChar() <= '7')
    {
       theNumber = theNumber * 8 + currentChar() - '0';
+      nextChar(); // Eat the octal digit
    }
    return true;
 }

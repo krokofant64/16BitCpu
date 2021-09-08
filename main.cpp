@@ -82,6 +82,21 @@ static const char* DivideC =   "Start:   LD R1 Q\n"
                                "Q:       .data 100\n"
                                "M:       .data 13\n";
 
+// ----------------------------------------------------------------------------
+
+void
+generateListing(
+   const Assembler& theAssembler)
+{
+   for (uint16_t i = 0; i < theAssembler.getCodeLength(); i++)
+   {
+      uint16_t instruction = theAssembler.getCode()[i];
+      const char* sourceCode = theAssembler.getSourceCode(i).c_str();
+      printf("%04X %s\n", instruction, sourceCode);
+   }
+}
+
+// ----------------------------------------------------------------------------
 
 void
 usage(
@@ -101,8 +116,6 @@ main(
       usage(argv[0]);
       return 1;
    }
-   (void) argc;
-   (void) argv;
 
    Assembler assembler;
 
@@ -112,6 +125,8 @@ main(
                                                  assembler.getErrorMessage().c_str());
       return 1;
    }
+
+   generateListing(assembler);
 
    Memory memory(1024);
 
