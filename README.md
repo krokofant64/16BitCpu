@@ -233,6 +233,14 @@ Example:
 ```
 CMP R3 R2
 ```
+|Condition         | Unsigned Compare Flags | Signed Compare Flags |
+|------------------|------------------------|----------------------|
+| R_src1 == R_src2 | Z == 1                 | Z == 1               |
+| R_src1 != R_src2 | Z == 0                 | Z == 0               |
+| R_src1 < R_src2  | C == 1                 | S != O               |
+| R_src1 >= R_src2 | C == 0                 | S == O               |
+| R_src1 <= R_src2 | Z == 1 or C == 1       | Z == 1 or S != O     |
+| R_src1 >= R_src2 | Z == 0 and C == 0      | Z == 0 and S == O    |
 ## Shift Instructions
 ### SHR - Logic shift right
 Operation
