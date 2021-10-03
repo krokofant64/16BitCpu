@@ -758,3 +758,8 @@ Example:
 ```
 STO R3 [R2 +18]
 ```
+# State Transitions
+##A: &rarr; RESET
+##B: RESET &rarr; FETCH INSTR
+##C: FETCH INSTR &rarr; WAIT INSTR
+##D: WAIT INSTR &rarr; DECODE INSTR
