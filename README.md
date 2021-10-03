@@ -15,6 +15,11 @@ The table below shows the encoding of the instructions and their mnemonics:
 
 ![Instruction format of KF16 CPU](https://github.com/krokofant64/16BitCpu/blob/master/doc/InstructionFormat.png "KF 16 CPU instruction format")
 
+The image below shows the state machine of the CPU:
+
+![State machine of KF16 CPU](https://github.com/krokofant64/16BitCpu/blob/master/doc/StateMachine.png "KF 16 CPU state machine")
+
+
 # Instructions
 ## ALU Instructions
 ### ADD - Add
