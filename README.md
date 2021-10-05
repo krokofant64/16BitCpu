@@ -785,7 +785,15 @@ PC = ALU.result
 ### E: DECODE INSTR &rarr; STORE RESULT AND CARRY - SHR, ASHL/SHL, ASHR, ROR, ROL
 
 ### F: DECODE INSTR &rarr; STORE RESULT AND CARRY - ADD, ADC, SUB, SBC
-
+```
+if DataIn == 16'b000?????????00?? then
+   ALU.operationType = `ALU_OP;
+   ALU.operation <= DataIn[2:0]; // ADD (0), ADC (1), SUB (2), SBC (3)
+   ALU.operand1 <= register[DataIn[9:7]];
+   ALU.operand2 <= register[DataIn[6:4]];
+   DestinationRegister <= DataIn[12:10];
+endif
+```
 ### G: DECODE INSTR &rarr; STORE RESULT - AND, OR, XOR, NOT
 
 ### H: DECODE INSTR &rarr; STORE RESULT - LD, LDL, LDH, SWP
