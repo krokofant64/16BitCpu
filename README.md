@@ -762,10 +762,28 @@ STO R3 [R2 +18]
 ### A: &rarr; RESET
 
 ### B: RESET &rarr; FETCH INSTR
-PC = 0; Write = 0; C = 0; Z = 0; N = 0
+PC = 0 
+
+Write = 0
+
+C = 0
+
+Z = 0
+
+N = 0
 
 ### C: FETCH INSTR &rarr; WAIT INSTR
-Address = PC; Write = 0; ALU.operationType = ALU; ALU.operation = ADD; ALU.operand1 = PC; ALU.operand2 = 1
+Address = PC
+
+Write = 0
+
+ALU.operationType = ALU
+
+ALU.operation = ADD
+
+ALU.operand1 = PC
+
+ALU.operand2 = 1
 
 ### D: WAIT INSTR &rarr; DECODE INSTR
 PC = ALU.result
