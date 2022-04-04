@@ -22,6 +22,22 @@ public:
 private:
 
    void
+   drawChar(
+      uint16_t theChar) const;
+
+   void
+   showCode() const;
+
+   void
+   showMemory() const;
+
+   void
+   showScreen() const;
+
+   void
+   showSourceCode() const;
+
+   void
    printf(
       size_t      theColumn, 
       size_t      theRow, 
@@ -31,7 +47,6 @@ private:
    const Assembler& assemblerM;
    const Cpu&       cpuM;
    const Memory&    memoryM;
-   char*            screenMd;
 };
 
 #endif

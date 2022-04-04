@@ -111,6 +111,26 @@ Assembler::parse(
          return false;
       }
    }
+   for (LabelMap::const_iterator iter = labelMapM.begin();
+      iter != labelMapM.end();
+      iter++)
+   {
+      const Label& label = (*iter).second;
+      if (label.isDefined == false)
+      {
+         errorMessageM = "Label \"" + label.name + "\" is undefined in line ";
+         for (size_t i = 0; i < label.fixupPos.size(); i++)
+         {
+            if (i != 0)
+            {
+               errorMessageM += ", ";
+            }
+            errorMessageM += std::to_string(label.fixupPos[i].line);
+         }
+         errorMessageM += ".";
+         return false;
+      }
+   }
    return true;
 }
 
@@ -929,7 +949,7 @@ Assembler::parseString(
 
 // ----------------------------------------------------------------------------
 
-bool
+bool  
 Assembler::findLabel(
    const std::string& theLabel,
    uint16_t           theMask,
@@ -947,6 +967,7 @@ Assembler::findLabel(
       FixupPos fixupPos;
       fixupPos.mask = theMask;
       fixupPos.address = currentAddressM;
+      fixupPos.line = lineM;
 
       label.fixupPos.push_back(fixupPos);
       labelMapM.insert(LabelMap::value_type(theLabel, label));

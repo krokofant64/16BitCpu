@@ -796,6 +796,8 @@ endif
 ```
 ### G: DECODE INSTR &rarr; STORE RESULT - AND, OR, XOR, NOT
 
+
+
 ### H: DECODE INSTR &rarr; STORE RESULT - LD, LDL, LDH, SWP
 
 ### I: DECODE INSTR &rarr; STORE RESULT - INC

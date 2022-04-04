@@ -12,14 +12,14 @@ public:
 
    explicit
    Memory(
-      uint16_t theSize);
+      uint32_t theSize);
 
    ~Memory();
 
    const uint16_t*
    readData(
       uint16_t  theAddress,
-      uint16_t& theDataLength) const;
+      uint32_t& theDataLength) const;
 
    bool
    writeBinary(
@@ -31,7 +31,7 @@ public:
       uint16_t theAddress,
       uint16_t theHexValue);
 
-   uint16_t
+   uint32_t
    writeData(
       uint16_t        theAddress,
       const uint16_t* theData,
@@ -52,7 +52,7 @@ private:
 
    uint16_t  addressM;
    uint16_t* memoryMd;
-   uint16_t  sizeM;
+   uint32_t  sizeM;
 };
 
 #endif

@@ -99,6 +99,20 @@ generateListing(
 // ----------------------------------------------------------------------------
 
 void
+generateVerilogMemory(
+   const Assembler& theAssembler)
+{
+   for (uint16_t i = 0; i < theAssembler.getCodeLength(); i++)
+   {
+      uint16_t instruction = theAssembler.getCode()[i];
+      const char* sourceCode = theAssembler.getSourceCode(i).c_str();
+      printf("mem[%d] =  16'h%04X; // %s\n", i, instruction, sourceCode);
+   }
+}
+
+// ----------------------------------------------------------------------------
+
+void
 usage(
    const char* theProgram)
 {
@@ -126,9 +140,9 @@ main(
       return 1;
    }
 
-   generateListing(assembler);
+   generateVerilogMemory(assembler);
 
-   Memory memory(1024);
+   Memory memory(1024 * 64);
 
    Cpu cpu(&memory);
 
@@ -140,9 +154,9 @@ main(
 
    while (true)
    {
-      printf("clockTick (enter), or quit (q+enter)? ");
-      int c = getchar();
+      printf("clockTick (enter), or quit (q+enter)?");
       printf("\n");
+      int c = getchar();
       if (c == '\n')
       {
          cpu.clockTick();

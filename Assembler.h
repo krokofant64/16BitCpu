@@ -28,7 +28,7 @@ public:
    getCodeLength() const;
 
    const std::string&
-   getSourceCode(uint16_t theAddress) const;
+   getSourceCode(int theAddress) const;
 
    size_t
    getErrorLine() const;
@@ -50,6 +50,7 @@ private:
    {
       uint16_t address;
       uint16_t mask;
+      size_t   line;
    };
 
    struct Label
@@ -272,9 +273,17 @@ Assembler::getErrorMessage() const
 
 inline
 const std::string&
-Assembler::getSourceCode(uint16_t theAddress) const
+Assembler::getSourceCode(int theAddress) const
 {
-   return sourceCodeM[theAddress];
+   if (theAddress >= 0 && theAddress < getCodeLength())
+   {
+      return sourceCodeM[theAddress];
+   }
+   else
+   {
+      static std::string emptyString;
+      return emptyString;
+   }
 }
 
 // ----------------------------------------------------------------------------

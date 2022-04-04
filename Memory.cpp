@@ -2,7 +2,7 @@
 #include <string.h>
 
 Memory::Memory(
-   uint16_t theSize)
+   uint32_t theSize)
 :  addressM(0),
    sizeM(theSize)
 {
@@ -21,11 +21,11 @@ Memory::~Memory()
 const uint16_t*
 Memory::readData(
    uint16_t  theAddress,
-   uint16_t& theDataLength) const
+   uint32_t& theDataLength) const
 {
    if (theAddress < sizeM)
    {
-      uint16_t maxDataLength = sizeM - theAddress;
+      uint32_t maxDataLength = sizeM - theAddress;
       theDataLength = theDataLength <= maxDataLength ? theDataLength : maxDataLength;
       return &memoryMd[theAddress];
    }
@@ -99,7 +99,7 @@ Memory::writeHex(
 
 // ----------------------------------------------------------------------------
 
-uint16_t
+uint32_t
 Memory::writeData(
    uint16_t        theAddress,
    const uint16_t* theData,
@@ -107,8 +107,8 @@ Memory::writeData(
 {
    if (addressM < sizeM)
    {
-      uint16_t maxDataLength = sizeM - theAddress;
-      uint16_t dataLength = theDataLength < maxDataLength ? theDataLength : maxDataLength;
+      uint32_t maxDataLength = sizeM - theAddress;
+      uint32_t dataLength = theDataLength < maxDataLength ? theDataLength : maxDataLength;
       for (uint16_t i = 0; i < dataLength; i++)
       {
          memoryMd[addressM + i] = theData[i];
@@ -141,10 +141,7 @@ void
 Memory::write(
    uint16_t theData)
 {
-   if (addressM < sizeM)
-   {
-      memoryMd[addressM] = theData;
-   }
+   memoryMd[addressM] = theData;
 } 
 
 
